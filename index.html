@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f766e" />
+  <title>খিলমুরারী সমবায় সমিতি</title>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --accent: #d97706;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .app-shell {
+      max-width: 480px;
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--bg);
+      padding-bottom: 84px;
+      box-shadow: 0 0 28px rgba(15, 23, 42, 0.08);
+    }
+    .topbar {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      padding: 16px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar h1 { margin: 0; font-size: 18px; font-weight: 700; }
+    .topbar p { margin: 2px 0 0; font-size: 12px; opacity: 0.9; }
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-outline { background: #fff; color: var(--text); border: 1px solid var(--border); }
+    .btn-sm { padding: 7px 10px; font-size: 12px; border-radius: 8px; }
+    .btn-block { width: 100%; }
+
+    .container { padding: 14px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      margin: 0 0 10px;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .stat-label { font-size: 12px; color: var(--muted); }
+    .stat-val { font-size: 18px; font-weight: 800; margin-top: 4px; }
+    .text-success { color: var(--success); }
+    .text-danger { color: var(--danger); }
+    .text-primary { color: var(--primary); }
+
+    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .list-item {
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .list-item:last-child { border-bottom: none; }
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: var(--text);
+    }
+    .badge-in { background: #dcfce7; color: #166534; }
+    .badge-out { background: #fee2e2; color: #991b1b; }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 20;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      padding: 10px 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .nav-btn.active { color: var(--primary); background: #f0fdfa; }
+    .hidden { display: none !important; }
+    .muted { color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>খিলমুরারী সমবায় সমিতি</h1>
+        <p id="sessionInfo">মোবাইল হিসাব ব্যবস্থাপনা</p>
+      </div>
+      <button id="logoutBtn" class="btn btn-outline btn-sm hidden" onclick="logout()">লগআউট</button>
+    </header>
+
+    <!-- LOGIN SCREEN -->
+    <section id="loginView" class="container">
+      <div class="card">
+        <h2 class="card-title">মোবাইল নম্বর দিয়ে লগইন</h2>
+        <label for="phoneInput">মোবাইল নম্বর (১১ ডিজিট)</label>
+        <input id="phoneInput" type="tel" placeholder="017XXXXXXXX" maxlength="11" />
+
+        <div id="otpBox" class="hidden">
+          <label for="otpInput">ওটিপি কোড (ডেমো: 1234)</label>
+          <input id="otpInput" type="number" placeholder="1234" />
+        </div>
+
+        <button id="sendOtpBtn" class="btn btn-primary btn-block" onclick="sendOtp()">ওটিপি পাঠান</button>
+        <button id="verifyOtpBtn" class="btn btn-accent btn-block hidden" onclick="verifyOtp()">লগইন করুন</button>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">দ্রুত ডেমো লগইন</h3>
+        <p class="muted">পরীক্ষার জন্য এক ক্লিকে লগইন করুন:</p>
+        <div class="grid-2">
+          <button class="btn btn-outline btn-sm" onclick="quickLogin('01711000001', 'ব্যবস্থাপক')">ব্যবস্থাপক ডেমো</button>
+          <button class="btn btn-outline btn-sm" onclick="quickLogin('01811000002', 'সদস্য')">সদস্য ডেমো</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN APP -->
+    <main id="mainView" class="container hidden">
+      <!-- DASHBOARD TAB -->
+      <div id="tab-home">
+        <div class="grid-2" style="margin-bottom: 12px;">
+          <div class="stat-box">
+            <div class="stat-label">মোট সদস্য</div>
+            <div id="statMembers" class="stat-val text-primary">০</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">মোট সঞ্চয়</div>
+            <div id="statSavings" class="stat-val text-success">৳০</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">বিতরণকৃত ঋণ</div>
+            <div id="statLoans" class="stat-val text-danger">৳০</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">হাতে থাকা তহবিল</div>
+            <div id="statBalance" class="stat-val">৳০</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">সাম্প্রতিক লেনদেন</h3>
+          <div id="recentTxList"></div>
+        </div>
+      </div>
+
+      <!-- MEMBERS TAB -->
+      <div id="tab-members" class="hidden">
+        <div class="card">
+          <h3 class="card-title">নতুন সদস্য যুক্ত করুন</h3>
+          <label for="mName">সদস্যের নাম</label>
+          <input id="mName" type="text" placeholder="যেমন: মো. করিম মিয়া" />
+
+          <label for="mPhone">মোবাইল নম্বর</label>
+          <input id="mPhone" type="tel" placeholder="017XXXXXXXX" maxlength="11" />
+
+          <label for="mDeposit">প্রাথমিক সঞ্চয় (৳)</label>
+          <input id="mDeposit" type="number" placeholder="500" min="0" />
+
+          <button class="btn btn-primary btn-block" onclick="addMember()">সদস্য যুক্ত করুন</button>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">সদস্য তালিকা</h3>
+          <div id="memberList"></div>
+        </div>
+      </div>
+
+      <!-- ACCOUNTING TAB -->
+      <div id="tab-account" class="hidden">
+        <div class="card">
+          <h3 class="card-title">নতুন হিসাব এন্ট্রি</h3>
+          <label for="txMember">সদস্য নির্বাচন করুন</label>
+          <select id="txMember"></select>
+
+          <label for="txType">হিসাবের ধরন</label>
+          <select id="txType">
+            <option value="সঞ্চয় জমা">সঞ্চয় জমা (+)</option>
+            <option value="সঞ্চয় উত্তোলন">সঞ্চয় উত্তোলন (-)</option>
+            <option value="ঋণ বিতরণ">ঋণ বিতরণ (-)</option>
+            <option value="কিস্তি আদায়">কিস্তি আদায় (+)</option>
+            <option value="আয়">সমিতির আয় (+)</option>
+            <option value="ব্যয়">সমিতির ব্যয় (-)</option>
+          </select>
+
+          <label for="txAmount">টাকার পরিমাণ (৳)</label>
+          <input id="txAmount" type="number" placeholder="1000" min="1" />
+
+          <label for="txNote">মন্তব্য (ঐচ্ছিক)</label>
+          <input id="txNote" type="text" placeholder="যেমন: নভেম্বর মাসের সঞ্চয়" />
+
+          <button class="btn btn-primary btn-block" onclick="addTransaction()">হিসাব সংরক্ষণ করুন</button>
+        </div>
+      </div>
+
+      <!-- REPORT TAB -->
+      <div id="tab-report" class="hidden">
+        <div class="card">
+          <h3 class="card-title">সকল লেনদেনের খতিয়ান</h3>
+          <div id="fullTxList"></div>
+        </div>
+        <button class="btn btn-outline btn-block" onclick="resetDemoData()">ডেমো তথ্য রিসেট করুন</button>
+      </div>
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav id="bottomNav" class="bottom-nav hidden">
+      <button class="nav-btn active" data-tab="home" onclick="switchTab('home', this)">হোম</button>
+      <button class="nav-btn" data-tab="members" onclick="switchTab('members', this)">সদস্য</button>
+      <button class="nav-btn" data-tab="account" onclick="switchTab('account', this)">হিসাব</button>
+      <button class="nav-btn" data-tab="report" onclick="switchTab('report', this)">খতিয়ান</button>
+    </nav>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'khilmurari_samabay_v1';
+    const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+    const toBn = (num) => String(num).replace(/\d/g, d => bnDigits[d]);
+    const fmtTk = (n) => '৳' + toBn(Number(n || 0).toLocaleString('en-IN'));
+
+    const defaultState = {
+      user: null,
+      members: [
+        { id: 1, name: 'মো. রফিকুল ইসলাম', phone: '01711000001', savings: 4500, loan: 0 },
+        { id: 2, name: 'মোছা. সালমা খাতুন', phone: '01811000002', savings: 3200, loan: 5000 }
+      ],
+      transactions: [
+        { id: 1, memberName: 'মো. রফিকুল ইসলাম', type: 'সঞ্চয় জমা', amount: 4500, note: 'প্রারম্ভিক সঞ্চয়', date: 'আজ' },
+        { id: 2, memberName: 'মোছা. সালমা খাতুন', type: 'ঋণ বিতরণ', amount: 5000, note: 'ব্যবসায়িক ঋণ', date: 'গতকাল' }
+      ]
+    };
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : structuredClone(defaultState);
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function sendOtp() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (!/^01\d{9}$/.test(phone)) {
+        alert('সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)');
+        return;
+      }
+      document.getElementById('otpBox').classList.remove('hidden');
+      document.getElementById('verifyOtpBtn').classList.remove('hidden');
+      document.getElementById('sendOtpBtn').classList.add('hidden');
+      alert('ওটিপি পাঠানো হয়েছে। ডেমো কোড: 1234');
+    }
+
+    function verifyOtp() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      const otp = document.getElementById('otpInput').value.trim();
+      if (otp !== '1234') {
+        alert('ভুল ওটিপি। ডেমো ওটিপি 1234 দিন।');
+        return;
+      }
+      const found = state.members.find(m => m.phone === phone);
+      state.user = { phone, role: found ? found.name : 'সমিতি ব্যবহারকারী' };
+      saveState();
+      renderAuth();
+      renderAll();
+    }
+
+    function quickLogin(phone, role) {
+      state.user = { phone, role };
+      saveState();
+      renderAuth();
+      renderAll();
+    }
+
+    function logout() {
+      state.user = null;
+      saveState();
+      document.getElementById('otpBox').classList.add('hidden');
+      document.getElementById('verifyOtpBtn').classList.add('hidden');
+      document.getElementById('sendOtpBtn').classList.remove('hidden');
+      document.getElementById('phoneInput').value = '';
+      document.getElementById('otpInput').value = '';
+      renderAuth();
+    }
+
+    function renderAuth() {
+      const loggedIn = Boolean(state.user);
+      document.getElementById('loginView').classList.toggle('hidden', loggedIn);
+      document.getElementById('mainView').classList.toggle('hidden', !loggedIn);
+      document.getElementById('bottomNav').classList.toggle('hidden', !loggedIn);
+      document.getElementById('logoutBtn').classList.toggle('hidden', !loggedIn);
+      document.getElementById('sessionInfo').textContent = loggedIn
+        ? `${state.user.role} (${toBn(state.user.phone)})`
+        : 'মোবাইল হিসাব ব্যবস্থাপনা';
+    }
+
+    function switchTab(tab, btnEl) {
+      ['home', 'members', 'account', 'report'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab);
+      });
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+    }
+
+    function addMember() {
+      const name = document.getElementById('mName').value.trim();
+      const phone = document.getElementById('mPhone').value.trim();
+      const deposit = Number(document.getElementById('mDeposit').value || 0);
+      if (!name || !/^01\d{9}$/.test(phone)) {
+        alert('সদস্যের নাম এবং সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন।');
+        return;
+      }
+      const member = { id: Date.now(), name, phone, savings: deposit, loan: 0 };
+      state.members.unshift(member);
+      if (deposit > 0) {
+        state.transactions.unshift({
+          id: Date.now() + 1,
+          memberName: name,
+          type: 'সঞ্চয় জমা',
+          amount: deposit,
+          note: 'নতুন সদস্য সঞ্চয়',
+          date: 'আজ'
+        });
+      }
+      document.getElementById('mName').value = '';
+      document.getElementById('mPhone').value = '';
+      document.getElementById('mDeposit').value = '';
+      saveState();
+      renderAll();
+      alert('নতুন সদস্য সফলভাবে যুক্ত হয়েছে।');
+    }
+
+    function addTransaction() {
+      const memberId = Number(document.getElementById('txMember').value);
+      const type = document.getElementById('txType').value;
+      const amount = Number(document.getElementById('txAmount').value);
+      const note = document.getElementById('txNote').value.trim() || type;
+      if (!amount || amount <= 0) {
+        alert('সঠিক টাকার পরিমাণ লিখুন।');
+        return;
+      }
+      const member = state.members.find(m => m.id === memberId);
+      if (member) {
+        if (type === 'সঞ্চয় জমা') member.savings += amount;
+        if (type === 'সঞ্চয় উত্তোলন') member.savings = Math.max(0, member.savings - amount);
+        if (type === 'ঋণ বিতরণ') member.loan += amount;
+        if (type === 'কিস্তি আদায়') member.loan = Math.max(0, member.loan - amount);
+      }
+      state.transactions.unshift({
+        id: Date.now(),
+        memberName: member ? member.name : 'সমিতি সাধারণ',
+        type,
+        amount,
+        note,
+        date: 'আজ'
+      });
+      document.getElementById('txAmount').value = '';
+      document.getElementById('txNote').value = '';
+      saveState();
+      renderAll();
+      alert('হিসাব সংরক্ষণ করা হয়েছে।');
+    }
+
+    function resetDemoData() {
+      if (!confirm('সব ডেমো তথ্য রিসেট করতে চান?')) return;
+      state = structuredClone(defaultState);
+      saveState();
+      renderAll();
+    }
+
+    function renderAll() {
+      const totalSavings = state.members.reduce((s, m) => s + Number(m.savings || 0), 0);
+      const totalLoans = state.members.reduce((s, m) => s + Number(m.loan || 0), 0);
+      let cashIn = 0, cashOut = 0;
+      state.transactions.forEach(t => {
+        if (['সঞ্চয় জমা', 'কিস্তি আদায়', 'আয়'].includes(t.type)) cashIn += Number(t.amount);
+        else cashOut += Number(t.amount);
+      });
+
+      document.getElementById('statMembers').textContent = toBn(state.members.length);
+      document.getElementById('statSavings').textContent = fmtTk(totalSavings);
+      document.getElementById('statLoans').textContent = fmtTk(totalLoans);
+      document.getElementById('statBalance').textContent = fmtTk(cashIn - cashOut);
+
+      // Member dropdown
+      const sel = document.getElementById('txMember');
+      sel.innerHTML = state.members.map(m => `<option value="${m.id}">${m.name} (${toBn(m.phone)})</option>`).join('');
+
+      // Member list
+      document.getElementById('memberList').innerHTML = state.members.length
+        ? state.members.map(m => `
+            <div class="list-item">
+              <div>
+                <strong>${m.name}</strong>
+                <div class="muted">${toBn(m.phone)}</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="text-success" style="font-weight:700;">সঞ্চয়: ${fmtTk(m.savings)}</div>
+                <div class="text-danger" style="font-size:12px;">ঋণ: ${fmtTk(m.loan)}</div>
+              </div>
+            </div>
+          `).join('')
+        : '<p class="muted">কোনো সদস্য যুক্ত করা হয়নি।</p>';
+
+      const renderTxRow = (t) => {
+        const isIn = ['সঞ্চয় জমা', 'কিস্তি আদায়', 'আয়'].includes(t.type);
+        return `
+          <div class="list-item">
+            <div>
+              <strong>${t.type}</strong> • <span class="muted">${t.memberName}</span>
+              <div class="muted">${t.note} • ${t.date}</div>
+            </div>
+            <span class="badge ${isIn ? 'badge-in' : 'badge-out'}">${isIn ? '+' : '-'}${fmtTk(t.amount)}</span>
+          </div>
+        `;
+      };
+
+      document.getElementById('recentTxList').innerHTML = state.transactions.slice(0, 5).map(renderTxRow).join('') || '<p class="muted">কোনো লেনদেন নেই।</p>';
+      document.getElementById('fullTxList').innerHTML = state.transactions.map(renderTxRow).join('') || '<p class="muted">কোনো লেনদেন নেই।</p>';
+    }
+
+    renderAuth();
+    renderAll();
+  </script>
+</body>
+</html>
